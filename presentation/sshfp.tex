@@ -38,6 +38,7 @@
 \usepackage[normalem]{ulem}
 \usepackage{amsmath}
 \usepackage{hyperref}
+\usepackage{tikzsymbols}
 
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{caption}[numbered]
@@ -136,8 +137,6 @@
 \end{itemize}
 \end{frame}
 
-\section{Jak wykorzystać rekordy SSHFP do zautomatyzowanej weryfikacji kluczy}
-
 \begin{frame}
 \frametitle{Problem - weryfikacja kluczy}
 \begin{itemize}
@@ -146,45 +145,122 @@
 \end{itemize}
 \end{frame}
 
-\section{Konfiguracja klienta SSH}
-
-\begin{frame}
-\frametitle{Konfiguracja klienta SSH}
-\begin{itemize}
-	\item Statystyki pracy serwera dostępne przez API
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Cechy nowego API}
-\begin{itemize}
-	\item Prostota i funkcjonalność
-	\item Oparte o komunikaty JSON
-	\item ,,Zdetypowane'' -- zmiany możliwe z innej maszyny nawet bez natywnych bibliotek serwera, każdy klient HTTP może służyć do zarządznia serwerem
-	\item Pozwala na przesyłanie nie tylko konfiguracji, ale także artefaktów na zdalne maszyny
-\end{itemize}
-\end{frame}
-
 \begin{frame}[fragile]
-\frametitle{Foo foo foo}
+\frametitle{Akceptacja klucza publicznego zdalnego hosta}
+\scriptsize
 \begin{verbatim}
-bar bar bar
+$ ssh example.com
+The authenticity of host 'example.com (1.2.3.4)' can't be established.
+RSA key fingerprint is 12:75:dd:41:22:3f:6f:88:f7:bc:4e:ad:2e:b5:da:2d.
+Are you sure you want to continue connecting (yes/no)?
 \end{verbatim}
 \end{frame}
 
+\begin{frame}
+\frametitle{Gdy klucz zostanie zaakceptowany}
+\begin{itemize}
+	\item Jest zapisywany w {\tt \$HOME/.ssh/.known\_hosts}
+	\item Używany do weryfikacji każdego kolejnego połączenia do tego samego hosta
+\end{itemize}
+\end{frame}
+
+\section{Jak wykorzystać rekordy SSHFP do zautomatyzowanej weryfikacji kluczy}
+
+\begin{frame}
+\frametitle{Mechanizm SSHFP}
+\begin{itemize}
+	\item Klient inicjuje połączenie z serwerem SSH
+	\item Serwer SSH legitymuje się swoim kluczem publicznym
+	\item Klient pobiera wartość rekordów SSHFP dla danego FQDN
+	\item Klient weryfikuje odcisk klucza dla danego algorytmu, skoro odcik się zgadza...
+	\begin{itemize}
+		\item Może automatycznie zaakceptować klucz
+		\item Może zapytać użytkownika czy klucz zaakceptować, podając informację o zgodności z rekordem SSHFP
+	\end{itemize}
+	\item Dalej połączenie SSH przebiega jak zazwyczaj
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Generowanie rekordów SSHFP}
+\begin{itemize}
+	\item Nie trzeba niczego instalować dodatkowo \Smiley
+	\item Znane narzędzie {\tt ssh-keygen} posiada tą funkcjonalność.
+	\item {\tt ssh-keygen -r `hostname`}
+\end{itemize}
+\end{frame}
+
+\section{Konfiguracja klienta SSH}
+
+\begin{frame}
+\frametitle{Konfiguracja klienta -- OpenSSH}
+\begin{itemize}
+	\item Nie trzeba niczego instalować dodatkowo \Smiley
+	\item Pliki konfiguracyjne klienta:
+	\begin{itemize}
+		\item {\tt /etc/ssh/ssh\_config}
+		\item {\tt \$HOME/.ssh/config}
+	\end{itemize}
+	\item Opcje:
+	\begin{itemize}
+		\item {\tt VerifyHostKeyDNS} na wartość {\tt yes} lub {\tt ask}.
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+
 \section{Automatyzacja procesu aktualizacji stref}
+
+\begin{frame}
+\frametitle{Automatyzacja aktualizacji stref}
+\begin{itemize}
+	\item Brak standardu \Sadey
+	\item Red Hat IPA/FreeIPA
+	\item Dynamic DNS -- nsupdate
+	\item Puppet/Chef/Ansible...
+	\item Generowanie kluczy w Kickstarcie i własny skrypt
+\end{itemize}
+\end{frame}
 
 \section{Zabezpieczanie DNS przed spoofingiem}
 
 \begin{frame}
+\frametitle{DNS a spoofing}
+\begin{itemize}
+	\item Brak podpisu elektronicznego w standardzie \Sadey
+	\begin{itemize}
+		\item Podatność DNS na ataki MITM
+	\end{itemize}
+	\item DNSSEC rozwiązuje ten problem
+	\begin{itemize}
+		\item Ale kto z Was już go wdrożył?
+		\item Ilu dostawców domen go obsługuje?
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{DNS a spoofing c.d.}
+\begin{itemize}
+	\item Nawet jeśli ,,spoofowalność'' DNS jest problemem...
+	\begin{itemize}
+		\item Samo wdrożenie SSHFP jest lepsze w porównaniu z brakiem jakiejkolwiek weryfikacji kluczy publicznych hostów.
+	\end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}
 \frametitle{Koniec\ldots}
-%\vspace*{0.15cm}
 \begin{center}
 \includegraphics[scale=0.5]{img-oseclogo.png}
 
 Dziękuje!
 
 Czy są pytania?
+
 \end{center}
 
 \end{frame}
