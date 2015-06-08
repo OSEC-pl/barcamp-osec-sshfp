@@ -126,22 +126,15 @@
 }
 \end{frame}
 
-
 \section{Zagrożenia bezpieczeństwa związane z weryfikacją kluczy publicznych hostów}
 
 \begin{frame}
-\frametitle{Pierwsze połączenie}
+\frametitle{SSH - weryfikacja kluczy a bezpieczeństwo}
 \begin{itemize}
 	\item Każdy z nas używa SSH...
 	\item Ale czy każdy z nas zdaję sobie sprawę z zagrożeń? 
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Problem - weryfikacja kluczy}
-\begin{itemize}
-	\item Foo {\tt bar}
-	\item \href{http://example.com/}{example}
+	\item Protokół SSH jest bezpieczny, ale...
+	\item Całe bezpieczeństwo opiera się na weryfikacji klucza publicznego zdalnego hosta!
 \end{itemize}
 \end{frame}
 
@@ -157,10 +150,25 @@ Are you sure you want to continue connecting (yes/no)?
 \end{frame}
 
 \begin{frame}
+\frametitle{Problem z weryfikacją kluczy publicznych}
+\begin{itemize}
+	\item SSH nie wymusza PKI
+	\item Manualna weryfikacja odcisku klucza najczęściej się nie odbywa (jeszcze nie widziałem nikogo, kto by to robił)
+	\begin{itemize}
+		\item Nie mam czasu
+		\item Zarobiony jestem
+		\item Ale kto będzie atakował ten mało ważny serwer?
+	\end{itemize}
+	\item Skutecznie wykonany atak Man-in-the-Middle całkowicie...
+\end{itemize}
+\end{frame}
+
+\begin{frame}
 \frametitle{Gdy klucz zostanie zaakceptowany}
 \begin{itemize}
 	\item Jest zapisywany w {\tt \$HOME/.ssh/.known\_hosts}
 	\item Używany do weryfikacji każdego kolejnego połączenia do tego samego hosta
+	\item Przy połączeniu do nowego hosta problem powraca...
 \end{itemize}
 \end{frame}
 
@@ -169,6 +177,9 @@ Are you sure you want to continue connecting (yes/no)?
 \begin{frame}
 \frametitle{Mechanizm SSHFP}
 \begin{itemize}
+	\item \href{https://tools.ietf.org/html/rfc4255}{RFC4255},
+		  \href{https://tools.ietf.org/html/rfc6594}{RFC6594},
+		  \href{https://tools.ietf.org/html/rfc7479}{RFC7479}
 	\item Klient inicjuje połączenie z serwerem SSH
 	\item Serwer SSH legitymuje się swoim kluczem publicznym
 	\item Klient pobiera wartość rekordów SSHFP dla danego FQDN
@@ -190,6 +201,33 @@ Are you sure you want to continue connecting (yes/no)?
 \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Struktura rekordu SSHFP}
+\scriptsize
+\begin{verbatim}
+www		IN A	 192.168.0.100
+www		IN SSHFP 1 1 0b34980da528297a8c9f3be3e8b6c05d58d14602
+www		IN SSHFP 1 2 1f45321c7f1b730840a7fef14e30725a9d5ef5c5c7a9174(...)
+www		IN SSHFP 2 1 c9a822aba840658002a4911f0a430f00f6e76d4e
+www		IN SSHFP 2 2 15d544b67d0074bcd74219be55b96cdb36378f513159582(...)
+\end{verbatim}
+\normalsize
+\begin{itemize}
+	\item Algorytm którym wygenerowano klucz
+	\begin{itemize}
+		\item {\tt 1} - RSA
+		\item {\tt 2} - DSA
+		\item {\tt 3} - ECDSA
+		\item {\tt 4} - Ed25519
+	\end{itemize}
+	\item Funkcja skrótu którą wygenerowano odcisk
+	\begin{itemize}
+		\item {\tt 1} - SHA1
+		\item {\tt 2} - SHA256
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
 \section{Konfiguracja klienta SSH}
 
 \begin{frame}
@@ -207,9 +245,6 @@ Are you sure you want to continue connecting (yes/no)?
 	\end{itemize}
 \end{itemize}
 \end{frame}
-
-
-
 
 \section{Automatyzacja procesu aktualizacji stref}
 
@@ -229,7 +264,7 @@ Are you sure you want to continue connecting (yes/no)?
 \begin{frame}
 \frametitle{DNS a spoofing}
 \begin{itemize}
-	\item Brak podpisu elektronicznego w standardzie \Sadey
+	\item Brak podpisu elektronicznego DNS w standardzie \Sadey
 	\begin{itemize}
 		\item Podatność DNS na ataki MITM
 	\end{itemize}
@@ -238,6 +273,7 @@ Are you sure you want to continue connecting (yes/no)?
 		\item Ale kto z Was już go wdrożył?
 		\item Ilu dostawców domen go obsługuje?
 	\end{itemize}
+	\item W obrębie własnej infrastruktury alternatywą może być IPsec
 \end{itemize}
 \end{frame}
 
