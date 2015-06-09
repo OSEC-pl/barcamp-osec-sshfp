@@ -133,8 +133,7 @@
 \begin{itemize}
 	\item Każdy z nas używa SSH...
 	\item Ale czy każdy z nas zdaję sobie sprawę z zagrożeń? 
-	\item Protokół SSH jest bezpieczny, ale...
-	\item Całe bezpieczeństwo opiera się na weryfikacji klucza publicznego zdalnego hosta!
+	\item Zwłaszcza w momencie pierwszego połączenia.
 \end{itemize}
 \end{frame}
 
@@ -147,27 +146,34 @@ The authenticity of host 'example.com (1.2.3.4)' can't be established.
 RSA key fingerprint is 12:75:dd:41:22:3f:6f:88:f7:bc:4e:ad:2e:b5:da:2d.
 Are you sure you want to continue connecting (yes/no)?
 \end{verbatim}
+\normalsize
+\begin{itemize}
+	\item Manualna weryfikacja odcisku klucza najczęściej się nie odbywa.
+	\begin{itemize}
+		\item A co to jest? Myślałem, że trzeba tu wpisać ,,yes''.
+		\item Nie mam czasu / zarobiony jestem.
+		\item Ale kto będzie atakował ten mało ważny serwer?
+	\end{itemize}
+
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}
 \frametitle{Problem z weryfikacją kluczy publicznych}
 \begin{itemize}
-	\item SSH nie wymusza PKI
-	\item Manualna weryfikacja odcisku klucza najczęściej się nie odbywa (jeszcze nie widziałem nikogo, kto by to robił)
-	\begin{itemize}
-		\item Nie mam czasu
-		\item Zarobiony jestem
-		\item Ale kto będzie atakował ten mało ważny serwer?
-	\end{itemize}
-	\item Skutecznie wykonany atak Man-in-the-Middle całkowicie...
+	\item Protokół SSH jest bezpieczny, ale...
+	\item Całe bezpieczeństwo opiera się na weryfikacji klucza publicznego zdalnego hosta!
+	\item Skutecznie wykonany atak Man-in-the-Middle całkowicie burzy to bezpieczeństwo.
+	\item SSH nie wymusza PKI.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Gdy klucz zostanie zaakceptowany}
 \begin{itemize}
-	\item Jest zapisywany w {\tt \$HOME/.ssh/.known\_hosts}
-	\item Używany do weryfikacji każdego kolejnego połączenia do tego samego hosta
+	\item Jest zapisywany w {\tt \$HOME/.ssh/.known\_hosts}.
+	\item Używany do weryfikacji każdego kolejnego połączenia do tego samego hosta.
 	\item Przy połączeniu do nowego hosta problem powraca...
 \end{itemize}
 \end{frame}
@@ -179,16 +185,16 @@ Are you sure you want to continue connecting (yes/no)?
 \begin{itemize}
 	\item \href{https://tools.ietf.org/html/rfc4255}{RFC4255},
 		  \href{https://tools.ietf.org/html/rfc6594}{RFC6594},
-		  \href{https://tools.ietf.org/html/rfc7479}{RFC7479}
-	\item Klient inicjuje połączenie z serwerem SSH
-	\item Serwer SSH legitymuje się swoim kluczem publicznym
-	\item Klient pobiera wartość rekordów SSHFP dla danego FQDN
+		  \href{https://tools.ietf.org/html/rfc7479}{RFC7479}.
+	\item Klient inicjuje połączenie z serwerem SSH.
+	\item Serwer SSH legitymuje się swoim kluczem publicznym.
+	\item Klient pobiera wartość rekordów SSHFP dla danego FQDN.
 	\item Klient weryfikuje odcisk klucza dla danego algorytmu, skoro odcik się zgadza...
 	\begin{itemize}
-		\item Może automatycznie zaakceptować klucz
-		\item Może zapytać użytkownika czy klucz zaakceptować, podając informację o zgodności z rekordem SSHFP
+		\item Może automatycznie zaakceptować klucz.
+		\item Może zapytać użytkownika czy klucz zaakceptować, podając informację o zgodności z rekordem SSHFP.
 	\end{itemize}
-	\item Dalej połączenie SSH przebiega jak zazwyczaj
+	\item Dalej połączenie SSH przebiega jak zazwyczaj.
 \end{itemize}
 \end{frame}
 
@@ -197,7 +203,7 @@ Are you sure you want to continue connecting (yes/no)?
 \begin{itemize}
 	\item Nie trzeba niczego instalować dodatkowo \Smiley
 	\item Znane narzędzie {\tt ssh-keygen} posiada tą funkcjonalność.
-	\item {\tt ssh-keygen -r `hostname`}
+	\item {\tt ssh-keygen -r `hostname`}.
 \end{itemize}
 \end{frame}
 
@@ -213,18 +219,19 @@ www		IN SSHFP 2 2 15d544b67d0074bcd74219be55b96cdb36378f513159582(...)
 \end{verbatim}
 \normalsize
 \begin{itemize}
-	\item Algorytm którym wygenerowano klucz
+	\item Algorytm którym wygenerowano klucz:
 	\begin{itemize}
-		\item {\tt 1} - RSA
-		\item {\tt 2} - DSA
-		\item {\tt 3} - ECDSA
-		\item {\tt 4} - Ed25519
+		\item {\tt 1} - RSA.
+		\item {\tt 2} - DSA.
+		\item {\tt 3} - ECDSA.
+		\item {\tt 4} - Ed25519.
 	\end{itemize}
-	\item Funkcja skrótu którą wygenerowano odcisk
+	\item Funkcja skrótu którą wygenerowano odcisk:
 	\begin{itemize}
-		\item {\tt 1} - SHA1
-		\item {\tt 2} - SHA256
+		\item {\tt 1} - SHA1.
+		\item {\tt 2} - SHA256.
 	\end{itemize}
+	\item Weryfikacja: {\tt dig -t SSHFP www.example.com}.
 \end{itemize}
 \end{frame}
 
@@ -233,11 +240,12 @@ www		IN SSHFP 2 2 15d544b67d0074bcd74219be55b96cdb36378f513159582(...)
 \begin{frame}
 \frametitle{Konfiguracja klienta -- OpenSSH}
 \begin{itemize}
-	\item Nie trzeba niczego instalować dodatkowo \Smiley
-	\item Pliki konfiguracyjne klienta:
+	\item Nie trzeba niczego instalować dodatkowo \Smiley.
+	\item Parametry konfiguracyjne klienta:
 	\begin{itemize}
-		\item {\tt /etc/ssh/ssh\_config}
-		\item {\tt \$HOME/.ssh/config}
+		\item {\tt /etc/ssh/ssh\_config}.
+		\item {\tt \$HOME/.ssh/config}.
+		\item Parametr {\tt -o} polecenia {\tt ssh}. 
 	\end{itemize}
 	\item Opcje:
 	\begin{itemize}
@@ -251,11 +259,11 @@ www		IN SSHFP 2 2 15d544b67d0074bcd74219be55b96cdb36378f513159582(...)
 \begin{frame}
 \frametitle{Automatyzacja aktualizacji stref}
 \begin{itemize}
-	\item Brak standardu \Sadey
-	\item Red Hat IPA/FreeIPA
-	\item Dynamic DNS -- nsupdate
+	\item Brak standardu \Sadey.
+	\item Red Hat IPA/FreeIPA.
+	\item Dynamic DNS -- nsupdate.
 	\item Puppet/Chef/Ansible...
-	\item Generowanie kluczy w Kickstarcie i własny skrypt
+	\item Generowanie kluczy w Kickstarcie i własny skrypt.
 \end{itemize}
 \end{frame}
 
@@ -264,16 +272,16 @@ www		IN SSHFP 2 2 15d544b67d0074bcd74219be55b96cdb36378f513159582(...)
 \begin{frame}
 \frametitle{DNS a spoofing}
 \begin{itemize}
-	\item Brak podpisu elektronicznego DNS w standardzie \Sadey
+	\item Brak podpisu elektronicznego DNS w standardzie \Sadey.
 	\begin{itemize}
-		\item Podatność DNS na ataki MITM
+		\item Podatność DNS na ataki MITM.
 	\end{itemize}
-	\item DNSSEC rozwiązuje ten problem
+	\item DNSSEC rozwiązuje ten problem.
 	\begin{itemize}
 		\item Ale kto z Was już go wdrożył?
 		\item Ilu dostawców domen go obsługuje?
 	\end{itemize}
-	\item W obrębie własnej infrastruktury alternatywą może być IPsec
+	\item W obrębie własnej infrastruktury alternatywą może być IPsec.
 \end{itemize}
 \end{frame}
 
