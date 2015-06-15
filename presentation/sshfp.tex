@@ -132,8 +132,8 @@
 \frametitle{SSH - weryfikacja kluczy a bezpieczeństwo}
 \begin{itemize}
 	\item Każdy z nas używa SSH...
-	\item Ale czy każdy z nas zdaję sobie sprawę z zagrożeń? 
-	\item Zwłaszcza w momencie pierwszego połączenia.
+	\item Protokół SSH jest ,,bezpieczny''.
+	\item Ale często zapominamy o zagrożeniach.
 \end{itemize}
 \end{frame}
 
@@ -152,7 +152,7 @@ Are you sure you want to continue connecting (yes/no)?
 	\begin{itemize}
 		\item A co to jest? Myślałem, że trzeba tu wpisać ,,yes''.
 		\item Nie mam czasu / zarobiony jestem.
-		\item Ale kto będzie atakował ten mało ważny serwer?
+		\item A kto będzie atakował ten mało ważny serwer?
 	\end{itemize}
 
 \end{itemize}
@@ -162,17 +162,17 @@ Are you sure you want to continue connecting (yes/no)?
 \begin{frame}
 \frametitle{Problem z weryfikacją kluczy publicznych}
 \begin{itemize}
-	\item Protokół SSH jest bezpieczny, ale...
+	\item Protokół SSH jest faktycznie bezpieczny, ale...
 	\item Całe bezpieczeństwo opiera się na weryfikacji klucza publicznego zdalnego hosta!
-	\item Skutecznie wykonany atak Man-in-the-Middle całkowicie burzy to bezpieczeństwo.
-	\item SSH nie wymusza PKI.
+	\item Skutecznie wykonany atak Man-in-the-Middle podczas pierwszego połączenia całkowicie burzy to bezpieczeństwo.
+	\item SSH nie wymusza stosowania infrastruktury klucza publicznego (PKI).
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Gdy klucz zostanie zaakceptowany}
 \begin{itemize}
-	\item Jest zapisywany w {\tt \$HOME/.ssh/.known\_hosts}.
+	\item Jest zapisywany w {\tt \$HOME/.ssh/known\_hosts}.
 	\item Używany do weryfikacji każdego kolejnego połączenia do tego samego hosta.
 	\item Przy połączeniu do nowego hosta problem powraca...
 \end{itemize}
@@ -261,9 +261,9 @@ www		IN SSHFP 2 2 15d544b67d0074bcd74219be55b96cdb36378f513159582(...)
 \begin{itemize}
 	\item Brak standardu \Sadey.
 	\item Red Hat IPA/FreeIPA.
-	\item Dynamic DNS -- nsupdate.
+	\item Dynamic DNS -- {\tt nsupdate}.
+	\item Generowanie kluczy w Kickstarcie i własny skrypt do aktualizacji DNS.
 	\item Puppet/Chef/Ansible...
-	\item Generowanie kluczy w Kickstarcie i własny skrypt.
 \end{itemize}
 \end{frame}
 
@@ -278,21 +278,24 @@ www		IN SSHFP 2 2 15d544b67d0074bcd74219be55b96cdb36378f513159582(...)
 	\end{itemize}
 	\item DNSSEC rozwiązuje ten problem.
 	\begin{itemize}
-		\item Ale kto z Was już go wdrożył?
-		\item Ilu dostawców domen go obsługuje?
+		\item Tylko trzeba go wdrożyć...
 	\end{itemize}
 	\item W obrębie własnej infrastruktury alternatywą może być IPsec.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{DNS a spoofing c.d.}
-\begin{itemize}
+	
 	\item Nawet jeśli ,,spoofowalność'' DNS jest problemem...
 	\begin{itemize}
 		\item Samo wdrożenie SSHFP jest lepsze w porównaniu z brakiem jakiejkolwiek weryfikacji kluczy publicznych hostów.
 	\end{itemize}
+\end{itemize}
+\end{frame}
 
+\begin{frame}
+\frametitle{Alternatywy dla SSHFP?}
+\begin{itemize}
+	\item OpenSSH CA (min. wersja 5.3, faktycznie potrzebna 5.6).
+	\item {\tt sss\_ssh\_knownhostsproxy}.
+	\item {\tt ssh\_keyscan}.
+	\item Manualna weryfikacja \Sadey.
 \end{itemize}
 \end{frame}
 
